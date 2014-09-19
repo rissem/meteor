@@ -150,8 +150,7 @@ main.registerCommand({
 // run
 ///////////////////////////////////////////////////////////////////////////////
 
-main.registerCommand({
-  name: 'run',
+var runCommandOptions = {
   requiresApp: true,
   maxArgs: Infinity,
   options: {
@@ -159,6 +158,7 @@ main.registerCommand({
     'mobile-port': { type: String },
     'app-port': { type: String },
     'http-proxy-port': { type: String },
+    'debug-port': { type: String },
     production: { type: Boolean },
     'raw-logs': { type: Boolean },
     settings: { type: String },
@@ -174,8 +174,14 @@ main.registerCommand({
     // and does not monitor for file changes. Not for end-user use.
     clean: { type: Boolean}
   }
-}, function (options) {
+};
 
+main.registerCommand(_.extend(
+  { name: 'run' },
+  runCommandOptions
+), doRunCommand);
+
+function doRunCommand (options) {
   // Calculate project versions. (XXX: Theoretically, we should not be doing it
   // here. We should do it lazily, if the command calls for it. However, we do
   // end up recalculating them for stats, for example, and, more importantly, we
@@ -309,6 +315,7 @@ main.registerCommand({
     httpProxyPort: options.httpProxyPort,
     appPort: appPort,
     appHost: appHost,
+    debugPort: options.debugPort,
     settingsFile: options.settings,
     program: options.program || undefined,
     buildOptions: {
@@ -321,6 +328,18 @@ main.registerCommand({
     once: options.once,
     extraRunners: runners
   });
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// debug
+///////////////////////////////////////////////////////////////////////////////
+
+main.registerCommand(_.extend(
+  { name: 'debug' },
+  runCommandOptions
+), function (options) {
+  options.debugPort = options['debug-port'] || '5858';
+  return doRunCommand(options);
 });
 
 ///////////////////////////////////////////////////////////////////////////////

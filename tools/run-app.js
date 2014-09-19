@@ -62,6 +62,7 @@ var AppProcess = function (options) {
   self.onListen = options.onListen;
   self.program = options.program || null;
   self.nodeOptions = options.nodeOptions || [];
+  self.debugPort = options.debugPort;
   self.settings = options.settings;
 
   self.proc = null;
@@ -206,6 +207,10 @@ _.extend(AppProcess.prototype, {
     if (! self.program) {
       // Old-style bundle
       var opts = _.clone(self.nodeOptions);
+      if (self.debugPort) {
+        require("./inspector").start(self.debugPort);
+        opts.push("--debug-brk=" + self.debugPort);
+      }
       opts.push(path.join(self.bundlePath, 'main.js'));
       opts.push('--keepalive');
 
@@ -329,6 +334,7 @@ var AppRunner = function (appDir, options) {
   self.rootUrl = options.rootUrl;
   self.settingsFile = options.settingsFile;
   self.program = options.program;
+  self.debugPort = options.debugPort;
   self.proxy = options.proxy;
   self.watchForChanges =
     options.watchForChanges === undefined ? true : options.watchForChanges;
@@ -559,6 +565,7 @@ _.extend(AppRunner.prototype, {
         });
       },
       program: self.program,
+      debugPort: self.debugPort,
       onListen: function () {
         self.proxy.setMode("proxy");
         options.onListen && options.onListen();

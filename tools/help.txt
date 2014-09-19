@@ -52,6 +52,19 @@ Options:
   --program      The program in the app to run (Advanced)
   --verbose      Print all output from builds logs.
 
+>>> debug
+Run the project, but pause at the first statement for debugging.
+
+Usage: meteor debug [run options]
+       meteor debug --debug-port <port> [run options]
+
+The options for 'meteor debug' are identical to those for 'meteor run',
+with one addition:
+
+Options:
+  --debug-port   Port on which the server process debugger should listen
+                 for incoming connections from debugging clients, such as
+                 node-inspector (default 5858).
 
 >>> create
 Create a new project.
